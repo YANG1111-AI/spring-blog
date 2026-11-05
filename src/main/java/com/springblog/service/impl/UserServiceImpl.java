@@ -83,7 +83,7 @@ public class UserServiceImpl implements IUserService {
         Integer authorityId = userMapper.selectAuthorityIdByName(DEFAULT_AUTHORITY);
         if (authorityId == null) {
             throw new IllegalStateException(
-                    "缺少 " + DEFAULT_AUTHORITY + " 权限行，请先执行 db/schema.sql 中的 t_authority 种子数据");
+                    "缺少 " + DEFAULT_AUTHORITY + " 权限行，请先执行 db/schema.sql 与 db/data.sql");
         }
         userMapper.insertUserAuthority(user.getId(), authorityId);
         log.info("Registered user {}", username);
