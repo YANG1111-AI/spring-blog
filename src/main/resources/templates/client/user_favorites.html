@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="client/header::header('我的收藏',null)"></div>
+<body>
+<div class="main-content">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <!-- 页面标题 -->
+        <div class="page-header" style="margin-bottom: 30px; text-align: center;">
+            <h2 style="color: #333; margin-bottom: 10px;">
+                <i class="fa fa-star" style="color: #f39c12;"></i> 我的收藏
+            </h2>
+            <p style="color: #666; margin: 0;">
+                共收藏了 <span style="color: #f39c12; font-weight: bold;" th:text="${favorites.total}">0</span> 篇文章
+            </p>
+        </div>
+        
+        <!-- 收藏列表 -->
+        <div class="favorites-list">
+            <div th:if="${favorites.list == null or favorites.list.size() == 0}" class="empty-state" 
+                 style="text-align: center; padding: 60px 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="font-size: 64px; color: #ddd; margin-bottom: 20px;">
+                    <i class="fa fa-star-o"></i>
+                </div>
+                <h3 style="color: #666; margin-bottom: 10px;">还没有收藏任何文章</h3>
+                <p style="color: #999; margin-bottom: 20px;">去发现一些有趣的文章并收藏吧！</p>
+                <a th:href="@{/}" class="btn btn-primary" 
+                   style="padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                    <i class="fa fa-home"></i> 回到首页
+                </a>
+            </div>
+            
+            <div th:if="${favorites.list != null and favorites.list.size() > 0}">
+                <div th:each="favorite : ${favorites.list}" class="favorite-item" 
+                     style="background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.2s;">
+                    <div class="row">
+                        <!-- 文章缩略图 -->
+                        <div class="col-md-3" th:if="${favorite.article.thumbnail != null}">
+                            <div class="article-thumbnail" style="width: 100%; height: 150px; border-radius: 8px; overflow: hidden;">
+                                <img th:src="${favorite.article.thumbnail}" alt="文章缩略图" 
+                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                        </div>
+                        
+                        <!-- 文章信息 -->
+                        <div th:class="${favorite.article.thumbnail != null ? 'col-md-9' : 'col-md-12'}">
+                            <div class="article-info">
+                                <!-- 文章标题 -->
+                                <h4 style="margin-bottom: 10px;">
+                                    <a th:href="@{'/article/' + ${favorite.article.id}}" 
+                                       style="color: #333; text-decoration: none; font-weight: 600;"
+                                       th:text="${favorite.article.title}">文章标题</a>
+                                </h4>
+                                
+                                <!-- 文章摘要 -->
+                                <p class="article-excerpt" style="color: #666; line-height: 1.6; margin-bottom: 15px;"
+                                   th:text="${commons.intro(favorite.article.content, 150)}">文章摘要...</p>
+                                
+                                <!-- 文章元信息 -->
+                                <div class="article-meta" style="display: flex; align-items: center; justify-content: space-between; color: #999; font-size: 14px;">
+                                    <div class="meta-left" style="display: flex; align-items: center; gap: 15px;">
+                                        <span>
+                                            <i class="fa fa-calendar"></i>
+                                            发布于 <span th:text="${commons.dateFormat(favorite.article.created)}"></span>
+                                        </span>
+                                        <span th:if="${favorite.article.categories != null}">
+                                            <i class="fa fa-folder"></i>
+                                            <span th:text="${favorite.article.categories}"></span>
+                                        </span>
+                                        <span th:if="${favorite.article.tags != null}">
+                                            <i class="fa fa-tags"></i>
+                                            <span th:text="${favorite.article.tags}"></span>
+                                        </span>
+                                    </div>
+                                    <div class="meta-right" style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="color: #f39c12;">
+                                            <i class="fa fa-star"></i>
+                                            收藏于 <span th:text="${commons.dateFormat(favorite.created)}"></span>
+                                        </span>
+                                        <button class="btn-unfavorite" th:onclick="'unfavoriteArticle(' + ${favorite.article.id} + ')'"
+                                                style="background: none; border: 1px solid #dc3545; color: #dc3545; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                                            <i class="fa fa-trash"></i> 取消收藏
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分页导航 -->
+        <div th:if="${favorites.list != null and favorites.list.size() > 0}" class="pagination-wrapper" style="margin-top: 30px;">
+            <div th:replace="comm/paging :: pageAdminNav(${favorites})"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="client/footer::footer"></div>
+
+<script>
+// 取消收藏功能
+function unfavoriteArticle(articleId) {
+    layer.confirm('确定要取消收藏这篇文章吗？', {
+        btn: ['确定', '取消'],
+        icon: 3,
+        title: '确认操作'
+    }, function(index) {
+        $.post('/article/unfavorite/' + articleId, function(result) {
+            if (result && result.success) {
+                layer.msg('取消收藏成功', {icon: 1, time: 1500}, function() {
+                    window.location.reload();
+                });
+            } else {
+                layer.msg(result.msg || '操作失败', {icon: 2, time: 2000});
+            }
+        }).fail(function() {
+            layer.msg('网络错误，请稍后重试', {icon: 2, time: 2000});
+        });
+        layer.close(index);
+    });
+}
+
+// 鼠标悬停效果
+$('.favorite-item').hover(
+    function() {
+        $(this).css({
+            'transform': 'translateY(-2px)',
+            'box-shadow': '0 4px 20px rgba(0,0,0,0.15)'
+        });
+    },
+    function() {
+        $(this).css({
+            'transform': 'translateY(0)',
+            'box-shadow': '0 2px 10px rgba(0,0,0,0.1)'
+        });
+    }
+);
+
+// 按钮悬停效果
+$('.btn-unfavorite').hover(
+    function() {
+        $(this).css({
+            'background': '#dc3545',
+            'color': 'white'
+        });
+    },
+    function() {
+        $(this).css({
+            'background': 'none',
+            'color': '#dc3545'
+        });
+    }
+);
+</script>
+
+<style>
+.favorite-item:hover {
+    transition: all 0.2s ease;
+}
+
+.btn-unfavorite:hover {
+    transition: all 0.2s ease;
+}
+
+.article-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .article-meta {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+    
+    .meta-right {
+        width: 100%;
+        justify-content: space-between !important;
+    }
+}
+</style>
+</body>
+</html>

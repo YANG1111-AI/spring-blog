@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑文章</title>
+    <link th:href="@{/user/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/amazeui.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/app.css}" rel="stylesheet"/>
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    
+    <!-- 引入文章编辑器样式 -->
+    <th:block th:replace="comm/article_editor :: editor-styles"></th:block>
+    
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .edit-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            min-height: calc(100vh - 200px);
+        }
+        .edit-header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .edit-header .back-btn {
+            background: #f5f5f5;
+            color: #666;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .edit-header .back-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+        }
+        .edit-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-group {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #fcc;
+        }
+        #md-container {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .mditor {
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="client/header::header('编辑文章',null)"></div>
+
+<div class="edit-container">
+    <div class="edit-header">
+        <h2>编辑文章</h2>
+        <a th:href="@{/user/article/my}" class="back-btn">
+            <i class="am-icon-arrow-left"></i> 返回文章列表
+        </a>
+    </div>
+    
+    <div class="edit-card">
+        <!-- 错误信息显示 -->
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        
+        <form th:action="@{/user/article/update}" method="post" id="article-form">
+            <!-- 引入文章编辑器表单 -->
+            <th:block th:replace="comm/article_editor :: editor-form(${contents}, false)"></th:block>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="am-icon-save"></i> 保存修改
+                </button>
+                <a th:href="@{/user/article/my}" class="btn btn-secondary">
+                    <i class="am-icon-times"></i> 取消编辑
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="client/footer::footer"></div>
+
+<!-- 引入文章编辑器脚本 -->
+<th:block th:replace="comm/article_editor :: editor-scripts"></th:block>
+
+<script>
+$(document).ready(function() {
+    // 表单提交处理
+    $('#article-form').on('submit', function(e) {
+        // 获取markdown编辑器内容
+        if (window.mditor) {
+            var content = window.mditor.value;
+            $('#content-editor').val(content);
+        }
+        
+        // 验证必填字段
+        var title = $('#title').val().trim();
+        if (!title) {
+            alert('请输入文章标题');
+            e.preventDefault();
+            return false;
+        }
+        
+        var content = $('#content-editor').val().trim();
+        if (!content) {
+            alert('请输入文章内容');
+            e.preventDefault();
+            return false;
+        }
+        
+        // 显示保存中状态
+        var submitBtn = $(this).find('button[type="submit"]');
+        submitBtn.prop('disabled', true).html('<i class="am-icon-spinner am-icon-spin"></i> 保存中...');
+    });
+});
+</script>
+</body>
+</html>

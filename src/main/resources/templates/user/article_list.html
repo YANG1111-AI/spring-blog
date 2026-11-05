@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的文章</title>
+    <link th:href="@{/user/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/amazeui.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/app.css}" rel="stylesheet"/>
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .article-list-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            min-height: calc(100vh - 200px);
+        }
+        .article-list-header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .article-list-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .article-list-header .publish-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .article-list-header .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        .article-list-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .article-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .article-table thead {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .article-table thead th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .article-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+        .article-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .article-table tbody td {
+            padding: 15px;
+            color: #555;
+            font-size: 14px;
+        }
+        .article-table tbody td a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .article-table tbody td a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        .article-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .article-stats {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            color: #888;
+            font-size: 13px;
+        }
+        .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat-item i {
+            font-size: 14px;
+        }
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f0f7ff;
+            color: #667eea;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+        .action-btn.view {
+            background: #48bb78;
+            color: white;
+        }
+        .action-btn.view:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(72, 187, 120, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        .action-btn.edit {
+            background: #667eea;
+            color: white;
+        }
+        .action-btn.edit:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        .action-btn.delete {
+            background: #f56565;
+            color: white;
+        }
+        .action-btn.delete:hover {
+            background: #e53e3e;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(245, 101, 101, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .article-table {
+                font-size: 12px;
+            }
+            .article-table thead th,
+            .article-table tbody td {
+                padding: 10px 8px;
+            }
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+                margin-right: 3px;
+            }
+            .action-buttons {
+                gap: 3px;
+            }
+            .article-list-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .article-list-header .publish-btn {
+                align-self: center;
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .empty-state p {
+            color: #999;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .empty-state .publish-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .empty-state .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        .pagination-wrapper {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="client/header::header('我的文章',null)"></div>
+<div class="article-list-container">
+    <div class="article-list-header">
+        <h2>我的文章</h2>
+        <a th:href="@{/user/article/publish}" class="publish-btn">
+            <i class="am-icon-plus"></i> 发布新文章
+        </a>
+    </div>
+    
+    <div class="article-list-card">
+        <!-- 成功消息显示 -->
+        <div th:if="${param.updated}" style="background: #d4edda; color: #155724; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+            <i class="am-icon-check-circle"></i> 文章更新成功！
+        </div>
+        <div th:if="${param.success}" style="background: #d4edda; color: #155724; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+            <i class="am-icon-check-circle"></i> 文章发布成功！
+        </div>
+        
+        <!-- 有文章时显示表格 -->
+        <th:block th:if="${articles != null && articles.list != null && articles.list.size() > 0}">
+            <table class="article-table">
+                <thead>
+                <tr>
+                    <th width="35%">文章标题</th>
+                    <th width="15%">发布时间</th>
+                    <th width="12%">浏览量</th>
+                    <th width="12%">评论数</th>
+                    <th width="11%">分类</th>
+                    <th width="15%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="article : ${articles.list}">
+                    <tr>
+                        <td>
+                            <a th:href="@{'/article/'+${article.id}}" target="_blank" 
+                               class="article-title" th:text="${article.title}"></a>
+                        </td>
+                        <td th:text="${commons.dateFormat(article.created)}"></td>
+                        <td>
+                            <span class="stat-item">
+                                <i class="am-icon-eye"></i>
+                                <span th:text="${article.hits ?: 0}">0</span>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-item">
+                                <i class="am-icon-comments"></i>
+                                <span th:text="${article.commentsNum ?: 0}">0</span>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="category-badge" th:text="${article.categories}">默认分类</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a th:href="@{'/article/'+${article.id}}" class="action-btn view" target="_blank">查看</a>
+                                <a th:href="@{'/user/article/edit/'+${article.id}}" class="action-btn edit">修改</a>
+                                <button class="action-btn delete" th:onclick="'deleteArticle(' + ${article.id} + ')'">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+            
+            <div class="pagination-wrapper">
+                <div th:replace="comm/paging :: pageAdminNav(${articles})"></div>
+            </div>
+        </th:block>
+        
+        <!-- 无文章时显示空状态 -->
+        <th:block th:unless="${articles != null && articles.list != null && articles.list.size() > 0}">
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3>还没有发布文章</h3>
+                <p>开始您的创作之旅，分享您的知识和想法吧！</p>
+                <a th:href="@{/user/article/publish}" class="publish-btn">
+                    <i class="am-icon-plus"></i> 发布第一篇文章
+                </a>
+            </div>
+        </th:block>
+    </div>
+</div>
+<div th:replace="client/footer::footer"></div>
+
+<!-- 删除确认模态框 -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 400px; width: 90%;">
+        <h3 style="margin: 0 0 15px 0; color: #333; font-size: 18px;">确认删除</h3>
+        <p style="margin: 0 0 25px 0; color: #666; font-size: 14px;">确定要删除这篇文章吗？删除后无法恢复。</p>
+        <div style="text-align: right;">
+            <button onclick="closeDeleteModal()" style="background: #f5f5f5; color: #666; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px; cursor: pointer;">取消</button>
+            <button id="confirmDeleteBtn" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">确认删除</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteArticleId = null;
+
+function deleteArticle(articleId) {
+    deleteArticleId = articleId;
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    deleteArticleId = null;
+}
+
+document.getElementById('confirmDeleteBtn').onclick = function() {
+    if (deleteArticleId) {
+        // 发送删除请求
+        $.ajax({
+            url: '/user/article/delete/' + deleteArticleId,
+            type: 'POST',
+            success: function(response) {
+                if (response.success) {
+                    alert('文章删除成功！');
+                    location.reload(); // 刷新页面
+                } else {
+                    alert('删除失败：' + (response.message || '未知错误'));
+                }
+            },
+            error: function() {
+                alert('删除失败，请稍后重试');
+            },
+            complete: function() {
+                closeDeleteModal();
+            }
+        });
+    }
+};
+
+// 点击模态框背景关闭
+document.getElementById('deleteModal').onclick = function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+};
+</script>
+</body>
+</html>
+

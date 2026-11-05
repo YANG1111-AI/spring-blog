@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='编辑用户',active='user'">
+<header th:replace="back/header::headerFragment(${title},${active})"></header>
+<body class="fixed-left">
+<div id="wrapper">
+    <div th:replace="back/header::header-body"></div>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">编辑用户</h4>
+                    </div>
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">用户信息</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form id="userForm" class="form-horizontal">
+                                    <input type="hidden" name="id" th:value="${user.id}"/>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">用户名</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="username" 
+                                                   th:value="${user.username}" readonly/>
+                                            <span class="help-block">用户名不可修改</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">邮箱 <span class="text-danger">*</span></label>
+                                        <div class="col-sm-9">
+                                            <input type="email" class="form-control" name="email" 
+                                                   th:value="${user.email}" required/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">新密码</label>
+                                        <div class="col-sm-9">
+                                            <input type="password" class="form-control" name="password" 
+                                                   placeholder="留空则不修改密码"/>
+                                            <span class="help-block">如需修改密码请输入新密码，否则留空</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">账户状态</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="valid">
+                                                <option value="1" th:selected="${user.valid == 1}">正常</option>
+                                                <option value="0" th:selected="${user.valid == 0}">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">注册时间</label>
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static" th:text="${commons.dateFormat(user.created)}"></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-3 col-sm-9">
+                                            <a class="btn btn-default" th:href="@{/admin/user}">返回列表</a>
+                                            <button type="button" class="btn btn-primary" onclick="updateUser()">保存修改</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:replace="back/footer :: footer-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="back/footer :: footer"></div>
+
+<script type="text/javascript">
+    function updateUser() {
+        var formData = $('#userForm').serialize();
+        
+        $.ajax({
+            type: 'post',
+            url: '/admin/user/update',
+            data: formData,
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.success) {
+                    alert("用户更新成功");
+                    window.location.href = '/admin/user';
+                } else {
+                    alert(result.msg || '更新失败');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('更新失败: ' + error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

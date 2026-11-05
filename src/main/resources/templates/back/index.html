@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='管理中心',active='home'">
+<header th:replace="back/header::headerFragment(${title},${active})"></header>
+<body class="fixed-left">
+<div id="wrapper">
+    <div th:replace="back/header::header-body"></div>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">
+                            <i class="fa fa-dashboard"></i> 管理仪表盘
+                            <small>欢迎来到zcy个人博客管理后台</small>
+                        </h4>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mini-stat clearfix bx-shadow bg-info">
+                            <span class="mini-stat-icon"><i class="fa fa-file-text-o" aria-hidden="true"></i></span>
+                            <div class="mini-stat-info text-right">
+                                <span class="counter" th:text="${statistics != null ? statistics.articles : 0}">0</span>
+                                <p>篇文章</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mini-stat clearfix bg-purple bx-shadow">
+                            <span class="mini-stat-icon"><i class="fa fa-comments-o" aria-hidden="true"></i></span>
+                            <div class="mini-stat-info text-right">
+                                <span class="counter" th:text="${statistics != null ? statistics.comments : 0}">0</span>
+                                <p>条评论</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mini-stat clearfix bg-success bx-shadow">
+                            <span class="mini-stat-icon"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                            <div class="mini-stat-info text-right">
+                                <span class="counter">1024</span>
+                                <p>总访问量</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mini-stat clearfix bg-warning bx-shadow">
+                            <span class="mini-stat-icon"><i class="fa fa-users" aria-hidden="true"></i></span>
+                            <div class="mini-stat-info text-right">
+                                <span class="counter">5</span>
+                                <p>注册用户</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷操作 -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <i class="fa fa-rocket"></i> 快捷操作
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/admin/article/publish" class="btn btn-primary btn-block">
+                                            <i class="fa fa-plus"></i><br>发布文章
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/admin/article" class="btn btn-info btn-block">
+                                            <i class="fa fa-list"></i><br>文章管理
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/admin/comment" class="btn btn-warning btn-block">
+                                            <i class="fa fa-comments"></i><br>评论管理
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/admin/user" class="btn btn-success btn-block">
+                                            <i class="fa fa-users"></i><br>用户管理
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/admin/setting" class="btn btn-danger btn-block">
+                                            <i class="fa fa-cog"></i><br>系统设置
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4 col-xs-6">
+                                        <a href="/" target="_blank" class="btn btn-default btn-block">
+                                            <i class="fa fa-eye"></i><br>查看网站
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 内容展示 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <i class="fa fa-file-text"></i> 最新文章
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div th:if="${articles == null or articles.size() == 0}">
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-info-circle"></i> 还没有发布文章
+                                    </div>
+                                </div>
+                                <ul class="list-group" th:if="${articles != null and articles.size() > 0}">
+                                    <li class="list-group-item" th:each="article : ${articles}">
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <a target="_blank" th:href="${commons.site_url('/article/')}+${article.id}"
+                                                   th:text="${article.title}" class="text-primary"></a>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <span class="badge badge-primary" th:text="${article.commentsNum}">0</span>
+                                                <small class="text-muted" th:text="${commons.dateFormat(article.created)}"></small>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <i class="fa fa-comment"></i> 最新评论
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div th:if="${comments == null or comments.size() == 0}">
+                                    <div class="alert alert-warning">
+                                        <i class="fa fa-exclamation-triangle"></i> 还没有收到评论
+                                    </div>
+                                </div>
+                                <ul class="list-group" th:if="${comments != null and comments.size() > 0}">
+                                    <li class="list-group-item" th:each="comment : ${comments}">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <i class="fa fa-user-circle fa-2x text-muted"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <h6 class="media-heading">
+                                                    <strong th:text="${comment.author}">用户</strong>
+                                                    <small class="text-muted" th:text="${commons.dateFormat(comment.created)}"></small>
+                                                </h6>
+                                                <p class="text-muted" th:utext="${commons.article(comment.content)}"></p>
+                                                <a th:href="${commons.site_url('/article/')}+${comment.articleId}+'#comments'"
+                                                   target="_blank" class="btn btn-xs btn-default">查看文章</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统信息 -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <i class="fa fa-info-circle"></i> 系统信息
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>博客版本：</strong> v1.0.0
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Spring Boot：</strong> 2.7.18
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Java版本：</strong> 11
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>运行时间：</strong> <span id="runtime">计算中...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:replace="back/footer :: footer-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 计算运行时间
+function updateRuntime() {
+    var startTime = new Date('2025-12-24 08:00:00');
+    var now = new Date();
+    var diff = now - startTime;
+    
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    document.getElementById('runtime').textContent = days + '天 ' + hours + '小时 ' + minutes + '分钟';
+}
+
+// 页面加载完成后更新运行时间
+document.addEventListener('DOMContentLoaded', function() {
+    updateRuntime();
+    // 每分钟更新一次
+    setInterval(updateRuntime, 60000);
+});
+</script>
+
+<div th:replace="back/footer :: footer"></div>
+</body>
+</html>

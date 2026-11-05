@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>链接测试</title>
+</head>
+<body>
+    <h1>链接测试页面</h1>
+    
+    <div>
+        <h2>测试链接</h2>
+        <ul>
+            <li><a th:href="@{/}">首页</a></li>
+            <li><a th:href="@{/login}">登录页面</a></li>
+            <li><a th:href="@{/register}">注册页面</a></li>
+        </ul>
+    </div>
+    
+    <div>
+        <h2>普通HTML链接</h2>
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="/login">登录页面</a></li>
+            <li><a href="/register">注册页面</a></li>
+        </ul>
+    </div>
+</body>
+</html>

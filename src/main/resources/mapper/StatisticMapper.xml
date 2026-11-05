@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zcy.dao.StatisticMapper">
+    
+    <resultMap id="StatisticResultMap" type="com.zcy.domain.Statistic">
+        <id column="id" property="id"/>
+        <result column="article_id" property="articleId"/>
+        <result column="hits" property="hits"/>
+        <result column="comments_num" property="commentsNum"/>
+    </resultMap>
+    
+    <!-- 根据文章ID查询统计信息 -->
+    <select id="selectStatisticByArticleId" resultMap="StatisticResultMap">
+        SELECT * FROM t_statistic WHERE article_id = #{articleId}
+    </select>
+    
+    <!-- 插入统计信息 -->
+    <insert id="insertStatistic" parameterType="com.zcy.domain.Statistic" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_statistic (article_id, hits, comments_num)
+        VALUES (#{articleId}, #{hits}, #{commentsNum})
+    </insert>
+    
+    <!-- 更新文章点击量 -->
+    <update id="updateArticleHits">
+        UPDATE t_statistic
+        SET hits = hits + 1
+        WHERE article_id = #{articleId}
+    </update>
+    
+    <!-- 更新文章评论数 -->
+    <update id="updateArticleComments">
+        UPDATE t_statistic
+        SET comments_num = comments_num + 1
+        WHERE article_id = #{articleId}
+    </update>
+    
+    <!-- 删除统计信息 -->
+    <delete id="deleteStatisticByArticleId">
+        DELETE FROM t_statistic WHERE article_id = #{articleId}
+    </delete>
+    
+</mapper>
+

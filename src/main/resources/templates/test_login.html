@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>登录状态测试</title>
+</head>
+<body>
+    <h1>登录状态测试</h1>
+    
+    <div sec:authorize="isAuthenticated()">
+        <p>用户已登录</p>
+        <p>用户名: <span sec:authentication="name"></span></p>
+        <p>权限: <span sec:authentication="authorities"></span></p>
+    </div>
+    
+    <div sec:authorize="!isAuthenticated()">
+        <p>用户未登录</p>
+        <a href="/login">点击登录</a>
+    </div>
+    
+    <hr>
+    <a href="/user/article/publish">发布文章</a>
+    <br>
+    <a href="/">返回首页</a>
+</body>
+</html>

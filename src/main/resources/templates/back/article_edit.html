@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='发布文章',active='publish'">
+<header th:replace="back/header::headerFragment(${title},${active})"></header>
+<!-- 引入公共编辑器样式 -->
+<div th:replace="comm/article_editor::editor-styles"></div>
+<link th:href="@{/back/plugins/select2.dist.css/select2-bootstrap.css}" rel="stylesheet"/>
+<link th:href="@{/back/plugins/toggles/toggles.css}" rel="stylesheet"/>
+<link th:href="@{/back/plugins/dropzone/4.3.0/min/dropzone.min.css}" rel="stylesheet">
+<style>
+    .note-toolbar {
+        text-align: center;
+    }
+
+    .note-editor.note-frame {
+        border: none;
+    }
+
+    .note-editor .note-toolbar {
+        background-color: #f5f5f5;
+        padding-bottom: 10px;
+    }
+
+    .note-toolbar .note-btn-group {
+        margin: 0;
+    }
+
+    .note-toolbar .note-btn {
+        border: none;
+    }
+
+    #articleForm #dropzone {
+        min-height: 200px;
+        background-color: #dbdde0;
+        line-height:200px;
+        margin-bottom: 10px;
+    }
+    #articleForm .dropzone {
+        border: 1px dashed #8662c6;
+        border-radius: 5px;
+        background: white;
+    }
+    #articleForm .dropzone .dz-message {
+        font-weight: 400;
+    }
+    #articleForm .dropzone .dz-message .note {
+        font-size: 0.8em;
+        font-weight: 200;
+        display: block;
+        margin-top: 1.4rem;
+    }
+</style>
+<body class="fixed-left">
+<div id="wrapper">
+    <div th:replace="back/header::header-body"></div>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">
+                            <th:block th:if="${null != contents}">
+                                编辑文章
+                            </th:block>
+                            <th:block th:unless="${null != contents}">
+                                发布文章
+                            </th:block>
+                        </h4>
+                    </div>
+                    <div class="col-md-12">
+                        <form id="articleForm">
+                            <!-- 使用公共编辑器组件 -->
+                            <div th:replace="comm/article_editor::editor-form(${contents}, ${false})"></div>
+
+                            <div class="clearfix"></div>
+
+                            <div class="text-right">
+                                <a class="btn btn-default waves-effect waves-light" th:href="@{/admin/article}">返回列表</a>
+                                <button type="button" class="btn btn-primary waves-effect waves-light" onclick="testSubmit();">
+                                    保存文章
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div th:replace="back/footer :: footer-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="back/footer :: footer"></div>
+
+<!-- 引入公共编辑器脚本 -->
+<div th:replace="comm/article_editor::editor-scripts"></div>
+<script th:src="@{/back/plugins/jquery-multi-select/jquery.quicksearch.js}"></script>
+<script th:src="@{/back/plugins/multi-select/0.9.12/js/jquery.multi-select.min.js}"></script>
+<script th:src="@{/back/plugins/select2/3.4.8/select2.min.js}"></script>
+<script th:src="@{//cdn.bootcss.com/jquery-toggles/2.0.4/toggles.min.js}"></script>
+<script th:src="@{/back/plugins/dropzone/4.3.0/min/dropzone.min.js}"></script>
+<script th:src="@{/back/plugins/to-markdown/3.1.0/to-markdown.min.js}"></script>
+
+<script>
+    // 后台管理特有的初始化逻辑
+    $(document).ready(function () {
+        $('.toggle').toggles({
+            on: true,
+            text: {
+                on: '开启',
+                off: '关闭'
+            }
+        });
+
+        $("#multiple-sel").select2({
+            width: '100%'
+        });
+
+        $('div.allow-false').toggles({
+            off: true,
+            text: {
+                on: '开启',
+                off: '关闭'
+            }
+        });
+
+        if($('#thumb-toggle').attr('thumb_url') != ''){
+            $('#thumb-toggle').toggles({
+                off: true,
+                text: {
+                    on: '开启',
+                    off: '关闭'
+                }
+            });
+            $('#thumb-toggle').attr('on', 'true');
+            $('#dropzone').css('background-image', 'url('+ $('#thumb-container').attr('thumb_url') +')');
+            $('#dropzone').css('background-size', 'cover');
+            $('#dropzone-container').show();
+        } else {
+            $('#thumb-toggle').toggles({
+                off: true,
+                text: {
+                    on: '开启',
+                    off: '关闭'
+                }
+            });
+            $('#thumb-toggle').attr('on', 'false');
+            $('#dropzone-container').hide();
+        }
+    });
+</script>
+
+<script>
+// 测试提交函数
+function testSubmit() {
+    console.log('测试提交函数被调用');
+    
+    // 检查必要的对象是否存在
+    if (typeof tale === 'undefined') {
+        alert('tale对象未定义，请检查base.js是否正确加载');
+        return;
+    }
+    
+    if (typeof mditor === 'undefined') {
+        alert('mditor对象未定义，请检查编辑器是否正确初始化');
+        return;
+    }
+    
+    // 获取表单数据
+    var title = $('#articleForm input[name=title]').val();
+    var content = mditor.value;
+    
+    console.log('标题:', title);
+    console.log('内容:', content);
+    
+    if (!title || title.trim() === '') {
+        alert('请输入文章标题');
+        return;
+    }
+    
+    if (!content || content.trim() === '') {
+        alert('请输入文章内容');
+        return;
+    }
+    
+    // 设置隐藏字段
+    $('#content-editor').val(content);
+    
+    // 设置分类
+    var categories = '默认分类';
+    if (!$("#articleForm #categories").length) {
+        $('<input>').attr({
+            type: 'hidden',
+            id: 'categories',
+            name: 'categories'
+        }).appendTo('#articleForm');
+    }
+    $("#articleForm #categories").val(categories);
+    
+    // 获取表单数据
+    var params = $("#articleForm").serialize();
+    console.log('表单数据:', params);
+    
+    // 确定提交URL
+    var articleId = $('#articleForm #id').val();
+    var url = (articleId && articleId !== '') ? '/admin/article/modify' : '/admin/article/publish';
+    
+    console.log('提交URL:', url);
+    console.log('文章ID:', articleId);
+    
+    // 提交数据
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: params,
+        dataType: 'json',
+        success: function (result) {
+            console.log('提交成功:', result);
+            if (result && result.success) {
+                alert('文章保存成功');
+                setTimeout(function () {
+                    window.location.href = '/admin/article';
+                }, 1000);
+            } else {
+                alert(result.msg || '保存文章失败！');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('提交失败:', xhr, status, error);
+            alert('提交失败: ' + error);
+        }
+    });
+}
+</script>
+</body>
+</html>

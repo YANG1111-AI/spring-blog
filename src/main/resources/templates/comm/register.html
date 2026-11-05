@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>注册博客账号</title>
+
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="shortcut icon" th:href="@{/user/img/bloglogo.jpg}"/>
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/amazeui.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/assets/css/amazeui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/app.css}"/>
+    <style>
+        .register-box-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .register-title {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .error-message {
+            background-color: rgba(255, 238, 238, 0.95);
+            color: #c33;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+            font-size: 14px;
+        }
+        .success-message {
+            background-color: rgba(238, 255, 238, 0.95);
+            color: #3c3;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3c3;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+        .register-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .register-btn:active {
+            transform: translateY(0);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .login-link a:hover {
+            color: #764ba2;
+            background-color: rgba(102, 126, 234, 0.1);
+            text-decoration: none;
+        }
+        .password-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="log">
+    <div class="am-g">
+        <div class="am-u-lg-3 am-u-md-6 am-u-sm-8 am-u-sm-centered log-content">
+            <div class="register-box-content">
+                <h1 class="register-title">注册博客账号</h1>
+                
+                <div th:if="${error}" class="error-message" th:text="${error}">注册失败</div>
+                <div th:if="${message}" class="success-message" th:text="${message}">注册成功</div>
+                
+                <form class="am-form" id="registerForm" th:action="@{/register}" method="post">
+                    
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <input type="text" placeholder="请输入用户名" name="username" required autocomplete="username"/>
+                            <i class="am-icon-user input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <input type="email" placeholder="请输入邮箱地址" name="email" required autocomplete="email"/>
+                            <i class="am-icon-envelope input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <input type="password" placeholder="请输入密码（至少6位）" name="password" required minlength="6" autocomplete="new-password"/>
+                            <i class="am-icon-lock input-icon"></i>
+                        </div>
+                        <div class="password-hint">密码长度至少6个字符</div>
+                    </div>
+                    
+                    <button type="submit" class="register-btn">注册</button>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="log-footer">
+        <p style="margin: 30px; color: #fafbfc">2025 © Powered By <a style="color: #fff" rel="nofollow">zcy</a></p>
+    </footer>
+</div>
+</body>
+</html>
+

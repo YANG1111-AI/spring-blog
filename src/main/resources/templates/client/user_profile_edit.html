@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="client/header::header('编辑个人资料',null)"></div>
+<body>
+<div class="main-content">
+    <div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <div class="profile-edit-card" style="background: white; border-radius: 10px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="card-header" style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #333; margin: 0;">
+                    <i class="fa fa-edit"></i> 编辑个人资料
+                </h2>
+                <p style="color: #666; margin: 10px 0 0 0;">完善您的个人信息，让其他用户更好地了解您</p>
+            </div>
+            
+            <form id="profileForm" class="profile-form">
+                <input type="hidden" name="userId" th:value="${profile.userId}" />
+                
+                <!-- 头像上传 -->
+                <div class="form-group" style="margin-bottom: 25px; text-align: center;">
+                    <label style="display: block; margin-bottom: 10px; color: #333; font-weight: 500;">头像</label>
+                    <div class="avatar-upload" style="position: relative; display: inline-block;">
+                        <div class="current-avatar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 36px; color: #999; border: 3px dashed #ddd; cursor: pointer;">
+                            <i class="fa fa-user" th:if="${profile.avatar == null}"></i>
+                            <img th:if="${profile.avatar != null}" th:src="${profile.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+                        </div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display: none;" />
+                        <input type="hidden" name="avatar" th:value="${profile.avatar}" />
+                        <p style="color: #666; font-size: 12px; margin-top: 10px;">点击上传头像</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- 昵称 -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">昵称</label>
+                            <input type="text" name="nickname" th:value="${profile.nickname}" 
+                                   class="form-control" placeholder="请输入昵称" maxlength="20"
+                                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;" />
+                            <span class="help-block" style="color: #666; font-size: 12px; margin-top: 5px;">2-20个字符</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- 性别 -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">性别</label>
+                            <select name="gender" class="form-control" 
+                                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                                <option value="">请选择性别</option>
+                                <option value="1" th:selected="${profile.gender == 1}">男</option>
+                                <option value="0" th:selected="${profile.gender == 0}">女</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- 所在地 -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">所在地</label>
+                            <input type="text" name="location" th:value="${profile.location}" 
+                                   class="form-control" placeholder="请输入所在地" maxlength="50"
+                                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- 生日 -->
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">生日</label>
+                            <input type="date" name="birthday" 
+                                   th:value="${profile.birthday != null ? #dates.format(profile.birthday, 'yyyy-MM-dd') : ''}" 
+                                   class="form-control"
+                                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;" />
+                            <span class="help-block" style="color: #666; font-size: 12px; margin-top: 5px;">可选填写，留空表示不公开生日</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 个人网站 -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">个人网站</label>
+                    <input type="url" name="website" th:value="${profile.website}" 
+                           class="form-control" placeholder="https://example.com" maxlength="200"
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;" />
+                    <span class="help-block" style="color: #666; font-size: 12px; margin-top: 5px;">请输入完整的网址，包含 http:// 或 https://</span>
+                </div>
+                
+                <!-- 个人简介 -->
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">个人简介</label>
+                    <textarea name="bio" th:text="${profile.bio}" 
+                              class="form-control" placeholder="介绍一下自己吧..." rows="4" maxlength="500"
+                              style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; resize: vertical;"></textarea>
+                    <span class="help-block" style="color: #666; font-size: 12px; margin-top: 5px;">最多500个字符</span>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="form-actions" style="text-align: center;">
+                    <a th:href="@{/user/profile}" class="btn btn-secondary" 
+                       style="padding: 12px 30px; margin-right: 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        <i class="fa fa-arrow-left"></i> 返回
+                    </a>
+                    <button type="button" onclick="updateProfile()" class="btn btn-primary" 
+                            style="padding: 12px 30px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fa fa-save"></i> 保存修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="client/footer::footer"></div>
+
+<!-- 确保加载必要的JavaScript库 -->
+<script th:src="@{/assets/js/jquery.min.js}"></script>
+<script th:src="@{/assets/js/layer.js}"></script>
+
+<script>
+// 头像上传功能
+$('.current-avatar').click(function() {
+    $('#avatarInput').click();
+});
+
+$('#avatarInput').change(function() {
+    var file = this.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('.current-avatar').html('<img src="' + e.target.result + '" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />');
+            $('input[name="avatar"]').val(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// 更新个人资料
+function updateProfile() {
+    console.log('开始更新个人资料...');
+    
+    // 表单验证
+    var nickname = $('input[name="nickname"]').val();
+    if (nickname && nickname.trim()) {
+        nickname = nickname.trim();
+        if (nickname.length < 2 || nickname.length > 20) {
+            layer.msg('昵称长度应在2-20个字符之间', {icon: 2, time: 2000});
+            return;
+        }
+    }
+    
+    var website = $('input[name="website"]').val();
+    if (website && website.trim()) {
+        website = website.trim();
+        if (!isValidUrl(website)) {
+            layer.msg('请输入有效的网站地址', {icon: 2, time: 2000});
+            return;
+        }
+    }
+    
+    // 处理生日字段 - 如果为空则不发送
+    var birthdayInput = $('input[name="birthday"]');
+    var birthdayValue = birthdayInput.val();
+    if (!birthdayValue || birthdayValue.trim() === '') {
+        birthdayInput.removeAttr('name'); // 临时移除name属性，避免发送空值
+    }
+    
+    // 获取表单数据
+    var formData = $('#profileForm').serialize();
+    console.log('表单数据:', formData);
+    
+    // 恢复生日字段的name属性
+    if (!birthdayValue || birthdayValue.trim() === '') {
+        birthdayInput.attr('name', 'birthday');
+    }
+    
+    // 显示加载状态
+    var loadingIndex = layer.load(1, {shade: [0.3, '#000']});
+    
+    $.ajax({
+        type: 'POST',
+        url: '/user/profile/update',
+        data: formData,
+        dataType: 'json',
+        success: function(result) {
+            console.log('更新结果:', result);
+            layer.close(loadingIndex);
+            if (result && result.success) {
+                layer.msg('个人资料更新成功', {icon: 1, time: 2000}, function() {
+                    window.location.href = '/user/profile';
+                });
+            } else {
+                layer.msg(result.msg || '更新失败', {icon: 2, time: 2000});
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX错误:', xhr.responseText);
+            layer.close(loadingIndex);
+            
+            // 尝试解析错误响应
+            try {
+                var errorResponse = JSON.parse(xhr.responseText);
+                layer.msg(errorResponse.msg || '更新失败', {icon: 2, time: 2000});
+            } catch (e) {
+                if (xhr.status === 400) {
+                    layer.msg('数据格式错误，请检查输入内容', {icon: 2, time: 2000});
+                } else {
+                    layer.msg('网络错误，请稍后重试', {icon: 2, time: 2000});
+                }
+            }
+        }
+    });
+}
+
+// URL验证函数
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return string.startsWith('http://') || string.startsWith('https://');
+    } catch (_) {
+        return false;
+    }
+}
+
+// 表单验证
+$('#profileForm input, #profileForm textarea, #profileForm select').on('blur', function() {
+    var $this = $(this);
+    var value = $this.val();
+    
+    // 移除之前的验证样式
+    $this.removeClass('is-valid is-invalid');
+    
+    // 昵称验证
+    if ($this.attr('name') === 'nickname' && value && value.trim()) {
+        var trimmedValue = value.trim();
+        if (trimmedValue.length < 2 || trimmedValue.length > 20) {
+            $this.addClass('is-invalid');
+            showFieldError($this, '昵称长度应在2-20个字符之间');
+        } else {
+            $this.addClass('is-valid');
+            hideFieldError($this);
+        }
+    }
+    
+    // 网站URL验证
+    if ($this.attr('name') === 'website' && value && value.trim()) {
+        if (!isValidUrl(value.trim())) {
+            $this.addClass('is-invalid');
+            showFieldError($this, '请输入有效的网站地址');
+        } else {
+            $this.addClass('is-valid');
+            hideFieldError($this);
+        }
+    }
+});
+
+function showFieldError($field, message) {
+    var $group = $field.closest('.form-group');
+    $group.find('.field-error').remove();
+    $group.append('<div class="field-error" style="color: #dc3545; font-size: 12px; margin-top: 5px;">' + message + '</div>');
+}
+
+function hideFieldError($field) {
+    var $group = $field.closest('.form-group');
+    $group.find('.field-error').remove();
+}
+
+// 页面加载完成后的初始化
+$(document).ready(function() {
+    console.log('个人资料编辑页面加载完成');
+    console.log('jQuery版本:', $.fn.jquery);
+    console.log('layer是否可用:', typeof layer !== 'undefined');
+});
+</script>
+
+<style>
+.form-control.is-valid {
+    border-color: #28a745;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: all 0.2s;
+}
+
+.current-avatar:hover {
+    border-color: #007bff;
+    transition: all 0.2s;
+}
+</style>
+</body>
+</html>

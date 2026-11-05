@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- 文章编辑器样式片段 -->
+<th:block th:fragment="editor-styles">
+    <link th:href="@{/back/plugins/tagsinput/jquery.tagsinput.css}" rel="stylesheet"/>
+    <link th:href="@{/back/plugins/mditor/css/mditor.min.css}" rel="stylesheet"/>
+    <style>
+        #tags_tagsinput {
+            background-color: #fafafa;
+            border: 1px solid #eeeeee;
+        }
+        #tags_addTag input {
+            width: 100%;
+        }
+        #tags_addTag {
+            margin-top: -5px;
+        }
+        .mditor .editor {
+            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .mditor .backdrop, .mditor .textarea, .mditor .viewer {
+            font-size: 14px;
+        }
+        .markdown-body {
+            font-size: 14px;
+        }
+    </style>
+</th:block>
+
+<!-- 文章编辑器表单片段 -->
+<th:block th:fragment="editor-form(contents, showCategory)">
+    <input type="hidden" name="id" th:value="${contents != null && contents.id != null} ? ${contents.id} : ''" id="id"/>
+    <input type="hidden" name="allowComment" th:value="${contents != null && contents.allowComment != null} ? ${contents.allowComment} : true" id="allow_comment"/>
+    <input type="hidden" name="content" id="content-editor"/>
+    <input type="hidden" name="categories" id="categories" th:value="${contents != null && contents.categories != null} ? ${contents.categories} : '默认分类'"/>
+    
+    <!-- 文章标题 -->
+    <div class="form-group">
+        <label for="title">文章标题 <span style="color: red;">*</span></label>
+        <input type="text" 
+               id="title" 
+               class="form-control" 
+               name="title"
+               th:placeholder="${contents != null} ? '' : '请输入文章标题（必填）'"
+               th:value="${contents != null && contents.title != null} ? ${contents.title} : ''"
+               required="required" 
+               aria-required="true"/>
+    </div>
+    
+    <!-- 标签和分类行 -->
+    <div class="form-row" th:if="${showCategory}">
+        <div class="form-group">
+            <label for="tags">文章标签</label>
+            <input name="tags" 
+                   id="tags" 
+                   type="text" 
+                   class="form-control" 
+                   th:placeholder="${contents != null} ? '' : '请输入标签，用逗号分隔'"
+                   th:value="${contents != null && contents.tags != null} ? ${contents.tags} : ''"/>
+        </div>
+        <div class="form-group">
+            <label for="categories-select">文章分类</label>
+            <input type="text" 
+                   id="categories-select" 
+                   class="form-control" 
+                   placeholder="默认分类" 
+                   value="默认分类" 
+                   readonly/>
+        </div>
+    </div>
+    
+    <!-- 仅标签（不显示分类） -->
+    <div class="form-group" th:unless="${showCategory}">
+        <label for="tags">文章标签</label>
+        <input name="tags" 
+               id="tags" 
+               type="text" 
+               class="form-control" 
+               th:placeholder="${contents != null} ? '' : '请输入文章标签'"
+               th:value="${contents != null && contents.tags != null} ? ${contents.tags} : ''"/>
+    </div>
+    
+    <!-- Markdown编辑器 -->
+    <div class="form-group">
+        <label>文章内容 <span style="color: red;">*</span></label>
+        <div id="md-container">
+            <textarea id="md-editor" th:utext="${contents != null && contents.content != null} ? ${contents.content} : ''"></textarea>
+        </div>
+    </div>
+</th:block>
+
+<!-- 文章编辑器脚本片段 -->
+<th:block th:fragment="editor-scripts">
+    <script th:src="@{/back/plugins/tagsinput/jquery.tagsinput.min.js}"></script>
+    <script th:src="@{/back/plugins/mditor/js/mditor.min.js}"></script>
+    <script th:src="@{/back/js/article.js}"></script>
+    <script>
+        // 确保mditor和标签输入正确初始化
+        $(document).ready(function() {
+            // 如果mditor还没有初始化，则初始化它
+            if (typeof mditor === 'undefined' || !mditor) {
+                window.mditor = Mditor.fromTextarea(document.getElementById('md-editor'));
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

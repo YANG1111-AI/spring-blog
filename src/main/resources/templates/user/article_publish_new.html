@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布文章</title>
+    <link th:href="@{/user/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/amazeui.min.css}" rel="stylesheet"/>
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/amazeui.min.js}"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .article-publish-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .article-publish-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .article-publish-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .article-publish-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .form-group input[type="text"], .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .form-group input[type="text"]:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .article-publish-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-default {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .error-box {
+            background: #fff5f5;
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            display: none;
+        }
+        .error-box p {
+            margin: 0;
+            color: #c53030;
+            font-size: 14px;
+        }
+        .success-box {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success-box p {
+            margin: 0;
+            color: #2f855a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="client/header::header('发布文章',null)"></div>
+<div class="article-publish-container">
+    <div class="article-publish-card">
+        <div class="article-publish-header">
+            <h2>发布新文章</h2>
+            <p>分享您的知识和想法</p>
+        </div>
+        
+        <div class="error-box" id="error-box">
+            <p id="error-message"></p>
+        </div>
+        
+        <div class="success-box" id="success-box">
+            <p id="success-message"></p>
+        </div>
+        
+        <form id="articleForm">
+            <div class="form-group">
+                <label for="title">文章标题 <span style="color: red;">*</span></label>
+                <input type="text" id="title" name="title" class="form-control" 
+                       placeholder="请输入文章标题（必填）" required maxlength="50"/>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">文章标签</label>
+                <input name="tags" id="tags" type="text" class="form-control" 
+                       placeholder="请输入标签，用逗号分隔"/>
+            </div>
+            
+            <div class="form-group">
+                <label for="content">文章内容 <span style="color: red;">*</span></label>
+                <textarea id="content" name="content" class="form-control" 
+                          placeholder="请输入文章内容" 
+                          required rows="15"></textarea>
+            </div>
+            
+            <input type="hidden" name="categories" value="默认分类"/>
+            <input type="hidden" name="allowComment" value="true"/>
+            
+            <div class="article-publish-actions">
+                <a class="btn btn-default" th:href="@{/}">取消</a>
+                <button type="button" class="btn btn-primary" onclick="publishArticle()">发布文章</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="client/footer::footer"></div>
+
+<script>
+function publishArticle() {
+    console.log('开始发布文章...');
+    
+    var title = $('#title').val().trim();
+    var content = $('#content').val().trim();
+    var tags = $('#tags').val().trim();
+    
+    // 隐藏之前的消息
+    $('#error-box').hide();
+    $('#success-box').hide();
+    
+    // 验证
+    if (!title) {
+        $('#error-message').text('请输入文章标题');
+        $('#error-box').show();
+        return;
+    }
+    
+    if (title.length > 50) {
+        $('#error-message').text('文章标题不能超过50个字符');
+        $('#error-box').show();
+        return;
+    }
+    
+    if (!content) {
+        $('#error-message').text('请输入文章内容');
+        $('#error-box').show();
+        return;
+    }
+    
+    // 显示加载状态
+    var $btn = $('.btn-primary');
+    var originalText = $btn.text();
+    $btn.text('发布中...').prop('disabled', true);
+    
+    // 准备数据
+    var data = {
+        title: title,
+        content: content,
+        tags: tags,
+        categories: '默认分类',
+        allowComment: true
+    };
+    
+    console.log('发送数据:', data);
+    
+    // 发送请求
+    $.ajax({
+        type: 'POST',
+        url: '/user/article/publish-ajax',
+        data: data,
+        dataType: 'json',
+        success: function(result) {
+            console.log('响应结果:', result);
+            $btn.text(originalText).prop('disabled', false);
+            
+            if (result && result.success) {
+                $('#success-message').text('文章发布成功！正在跳转...');
+                $('#success-box').show();
+                
+                setTimeout(function() {
+                    window.location.href = '/user/article/my';
+                }, 1500);
+            } else {
+                $('#error-message').text(result.msg || '发布文章失败！');
+                $('#error-box').show();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX错误:', status, error, xhr);
+            console.error('响应内容:', xhr.responseText);
+            
+            $btn.text(originalText).prop('disabled', false);
+            
+            var errorMsg = '请求失败：';
+            if (xhr.status === 401) {
+                errorMsg = '用户未登录，请重新登录';
+                setTimeout(function() {
+                    window.location.href = '/login';
+                }, 2000);
+            } else if (xhr.status === 404) {
+                errorMsg = '接口不存在';
+            } else if (xhr.status === 500) {
+                errorMsg = '服务器内部错误';
+            } else if (xhr.responseJSON && xhr.responseJSON.msg) {
+                errorMsg = xhr.responseJSON.msg;
+            } else {
+                errorMsg += error || '未知错误';
+            }
+            
+            $('#error-message').text(errorMsg);
+            $('#error-box').show();
+        }
+    });
+}
+</script>
+</body>
+</html>

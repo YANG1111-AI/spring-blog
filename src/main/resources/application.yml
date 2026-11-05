@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: blog-system
+  
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog_system?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  
+  # Redis配置（如果Redis不可用，可以注释掉，项目仍然可以启动）
+  # redis:
+  #   host: localhost
+  #   port: 6379
+  #   password: 
+  #   database: 0
+  #   timeout: 3000
+  #   lettuce:
+  #     pool:
+  #       max-active: 8
+  #       max-idle: 8
+  #       min-idle: 0
+  #       max-wait: -1
+  
+  # Thymeleaf配置
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+  
+  # 静态资源路径配置
+  web:
+    resources:
+      static-locations: classpath:/static/
+  
+  # 缓存配置（如果Redis不可用，可以注释掉或改为simple）
+  # cache:
+  #   type: redis
+
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zcy.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# PageHelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+# 服务器配置
+server:
+  port: 8010
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# 日志配置
+logging:
+  level:
+    com.zcy: debug
+    org.springframework: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

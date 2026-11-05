@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='编辑评论',active='comments'">
+<header th:replace="back/header::headerFragment(${title},${active})"></header>
+<body class="fixed-left">
+<div id="wrapper">
+    <div th:replace="back/header::header-body"></div>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">编辑评论</h4>
+                    </div>
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="card-box">
+                            <h4 class="m-t-0 header-title"><b>编辑评论信息</b></h4>
+                            <p class="text-muted font-13 m-b-30">
+                                修改评论内容、作者信息和审核状态
+                            </p>
+                            
+                            <form action="/admin/comment/update" method="post" class="form-horizontal">
+                                <input type="hidden" name="id" th:value="${comment.id}">
+                                <input type="hidden" name="articleId" th:value="${comment.articleId}">
+                                <input type="hidden" name="created" th:value="${comment.created}">
+                                <input type="hidden" name="ip" th:value="${comment.ip}">
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="author">评论作者</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" id="author" name="author" 
+                                               th:value="${comment.author}" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="content">评论内容</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" id="content" name="content" rows="6" required th:text="${comment.content}"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" for="status">评论状态</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="approved" th:selected="${comment.status == 'approved'}">已审核</option>
+                                            <option value="pending" th:selected="${comment.status == 'pending'}">待审核</option>
+                                            <option value="rejected" th:selected="${comment.status == 'rejected'}">已拒绝</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">关联文章</label>
+                                    <div class="col-md-9">
+                                        <p class="form-control-static">
+                                            <a th:href="@{'/article/'+${comment.articleId}}" target="_blank" 
+                                               class="btn btn-info btn-xs">
+                                                <i class="fa fa-external-link"></i> 查看文章 (ID: <span th:text="${comment.articleId}"></span>)
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">发布时间</label>
+                                    <div class="col-md-9">
+                                        <p class="form-control-static" th:text="${commons.dateFormat(comment.created)}"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button type="submit" class="btn btn-success waves-effect waves-light">
+                                            <i class="fa fa-save"></i> 保存修改
+                                        </button>
+                                        <a href="/admin/comment" class="btn btn-default waves-effect waves-light m-l-5">
+                                            <i class="fa fa-arrow-left"></i> 返回列表
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div th:replace="back/footer :: footer-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="back/footer :: footer"></div>
+</body>
+</html>

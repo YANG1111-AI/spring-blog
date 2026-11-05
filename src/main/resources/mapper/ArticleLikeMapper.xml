@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zcy.dao.ArticleLikeMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="articleLikeResultMap" type="com.zcy.domain.ArticleLike">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="created" column="created"/>
+        <association property="user" javaType="com.zcy.domain.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="email" column="email"/>
+        </association>
+        <association property="article" javaType="com.zcy.domain.Article">
+            <id property="id" column="article_id"/>
+            <result property="title" column="title"/>
+        </association>
+    </resultMap>
+
+    <!-- 添加点赞 -->
+    <insert id="insertLike" parameterType="com.zcy.domain.ArticleLike">
+        INSERT INTO t_article_like (user_id, article_id, created)
+        VALUES (#{userId}, #{articleId}, #{created})
+    </insert>
+
+    <!-- 取消点赞 -->
+    <delete id="deleteLike">
+        DELETE FROM t_article_like 
+        WHERE user_id = #{userId} AND article_id = #{articleId}
+    </delete>
+
+    <!-- 检查用户是否已点赞文章 -->
+    <select id="selectLikeByUserAndArticle" resultMap="articleLikeResultMap">
+        SELECT * FROM t_article_like 
+        WHERE user_id = #{userId} AND article_id = #{articleId}
+    </select>
+
+    <!-- 获取文章的点赞列表 -->
+    <select id="selectLikesByArticleId" resultMap="articleLikeResultMap">
+        SELECT al.*, u.username, u.email, a.title
+        FROM t_article_like al
+        LEFT JOIN t_user u ON al.user_id = u.id
+        LEFT JOIN t_article a ON al.article_id = a.id
+        WHERE al.article_id = #{articleId}
+        ORDER BY al.created DESC
+    </select>
+
+    <!-- 获取用户的点赞列表 -->
+    <select id="selectLikesByUserId" resultMap="articleLikeResultMap">
+        SELECT al.*, u.username, u.email, a.title
+        FROM t_article_like al
+        LEFT JOIN t_user u ON al.user_id = u.id
+        LEFT JOIN t_article a ON al.article_id = a.id
+        WHERE al.user_id = #{userId}
+        ORDER BY al.created DESC
+    </select>
+
+    <!-- 获取文章点赞数 -->
+    <select id="countLikesByArticleId" resultType="int">
+        SELECT COUNT(*) FROM t_article_like WHERE article_id = #{articleId}
+    </select>
+
+    <!-- 获取用户点赞数 -->
+    <select id="countLikesByUserId" resultType="int">
+        SELECT COUNT(*) FROM t_article_like WHERE user_id = #{userId}
+    </select>
+
+</mapper>

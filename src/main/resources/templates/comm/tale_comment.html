@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="tale_comment" >
+<body>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    (function () {
+        window.TaleComment = {
+            subComment: function () {
+                console.log('开始提交评论');
+                
+                // 获取表单数据
+                var formData = $('#comment-form').serialize();
+                console.log('表单数据:', formData);
+                
+                // 检查评论内容
+                var content = $('#textarea').val();
+                console.log('评论内容:', content);
+                
+                if (!content || content.trim() === '') {
+                    alert('请输入评论内容');
+                    return false;
+                }
+                
+                $.ajax({
+                    type: 'post',
+                    url: '/comment',
+                    data: formData,
+                    async: false,
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log('评论提交成功:', result);
+                        if (result && result.success) {
+                            alert("评论提交成功!");
+                            window.location.reload();
+                        } else {
+                            console.error('评论提交失败:', result);
+                            alert("发送失败: " + (result.msg || '未知错误'));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX请求失败:', xhr, status, error);
+                        var errorMsg = "评论提交失败：";
+                        if (xhr.responseJSON && xhr.responseJSON.msg) {
+                            errorMsg += xhr.responseJSON.msg;
+                        } else if (xhr.responseText) {
+                            errorMsg += xhr.responseText;
+                        } else {
+                            errorMsg += error || '未知错误';
+                        }
+                        alert(errorMsg);
+                    }
+                });
+                return false;
+            }
+        };
+    })();
+</script>
+</body>
+</html>

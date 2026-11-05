@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布文章</title>
+    <link th:href="@{/user/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/css/amazeui.min.css}" rel="stylesheet"/>
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/amazeui.min.js}"></script>
+    <!-- 引入公共编辑器样式 -->
+    <div th:replace="comm/article_editor::editor-styles"></div>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        .article-publish-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .article-publish-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .article-publish-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .article-publish-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .article-publish-header p {
+            margin: 10px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        #tags_tagsinput {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #tags_addTag input {
+            width: 100%;
+        }
+        #tags_addTag {
+            margin-top: -5px;
+        }
+        .mditor .editor {
+            min-height: 400px;
+        }
+        .article-publish-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-default {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .btn-default:hover {
+            background: #e8e8e8;
+        }
+        .tips-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .tips-box p {
+            margin: 0;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .error-box {
+            background: #fff5f5;
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            display: none;
+        }
+        .error-box p {
+            margin: 0;
+            color: #c53030;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .success-box {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success-box p {
+            margin: 0;
+            color: #2f855a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="client/header::header('发布文章',null)"></div>
+<div class="article-publish-container">
+    <div class="article-publish-card">
+        <div class="article-publish-header">
+            <h2>发布新文章</h2>
+            <p>分享您的知识和想法</p>
+        </div>
+        
+        <div class="tips-box">
+            <p>💡 提示：请填写文章标题和内容，标签和分类为可选。文章发布后可以在"我的文章"中查看和管理。</p>
+        </div>
+        
+        <div class="error-box" id="error-box">
+            <p id="error-message"></p>
+        </div>
+        
+        <div class="success-box" id="success-box">
+            <p id="success-message"></p>
+        </div>
+        
+        <form id="articleForm">
+            <!-- 使用公共编辑器组件 -->
+            <div th:replace="comm/article_editor::editor-form(${null}, ${true})"></div>
+            
+            <div class="article-publish-actions">
+                <a class="btn btn-default" th:href="@{/}">取消</a>
+                <button type="button" class="btn btn-primary" onclick="subArticle('publish');">发布文章</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="client/footer::footer"></div>
+
+<!-- 引入公共编辑器脚本 -->
+<div th:replace="comm/article_editor::editor-scripts"></div>
+<script>
+    // 用户发布文章的特定逻辑
+    $(document).ready(function() {
+        console.log('页面加载完成，开始初始化...');
+        
+        // CSRF已禁用，直接提交表单
+        
+        console.log('初始化完成');
+        
+        // 等待一段时间确保所有脚本都加载完成
+        setTimeout(function() {
+            console.log('检查mditor状态:', typeof mditor, mditor);
+            
+            // 重写subArticle函数，使用用户文章发布URL
+            window.subArticle = function(status) {
+                console.log('subArticle函数被调用，参数:', status);
+                
+                // 获取表单数据
+                var title = $('#articleForm input[name=title]').val();
+                var content = '';
+                
+                // 检查mditor是否存在
+                if (typeof mditor !== 'undefined' && mditor && mditor.value) {
+                    content = mditor.value;
+                } else {
+                    content = $('#md-editor').val();
+                }
+                
+                console.log('获取到的数据:', {title: title, content: content});
+                
+                if (title == '') {
+                    $('#error-message').text('请输入文章标题');
+                    $('#error-box').show();
+                    $('#success-box').hide();
+                    return;
+                }
+                if (title.length > 25) {
+                    $('#error-message').text('文章标题不能超过25个字符！');
+                    $('#error-box').show();
+                    $('#success-box').hide();
+                    return;
+                }
+                if (content == '') {
+                    $('#error-message').text('请输入文章内容');
+                    $('#error-box').show();
+                    $('#success-box').hide();
+                    return;
+                }
+                
+                $('#content-editor').val(content);
+                
+                // 设置categories，使用默认值"默认分类"
+                var categories = '默认分类';
+                if (!$("#articleForm #categories").length) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        id: 'categories',
+                        name: 'categories'
+                    }).appendTo('#articleForm');
+                }
+                $("#articleForm #categories").val(categories);
+                
+                var params = $("#articleForm").serialize();
+                var url = '/user/article/publish-ajax'; // 使用AJAX专用接口
+                
+                console.log('提交数据:', params);
+                console.log('提交URL:', url);
+                
+                // 显示加载状态
+                var $submitBtn = $('.btn-primary');
+                var originalText = $submitBtn.text();
+                $submitBtn.text('发布中...').prop('disabled', true);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: params,
+                    dataType: 'json',
+                    success: function(result) {
+                        console.log('响应结果:', result);
+                        $submitBtn.text(originalText).prop('disabled', false);
+                        
+                        if (result && result.success) {
+                            // 显示成功消息
+                            $('#success-message').text('文章发布成功！正在跳转...');
+                            $('#success-box').show();
+                            $('#error-box').hide();
+                            
+                            // 清除草稿
+                            if (typeof clearDraft === 'function') {
+                                clearDraft();
+                            }
+                            
+                            // 延迟跳转，让用户看到成功消息
+                            setTimeout(function() {
+                                window.location.href = '/user/article/my';
+                            }, 1500);
+                        } else {
+                            $('#error-message').text(result.msg || '发布文章失败！');
+                            $('#error-box').show();
+                            $('#success-box').hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", status, error, xhr);
+                        console.error("响应状态码:", xhr.status);
+                        console.error("响应内容:", xhr.responseText);
+                        
+                        $submitBtn.text(originalText).prop('disabled', false);
+                        
+                        var errorMsg = '请求失败：';
+                        if (xhr.status === 403) {
+                            errorMsg += 'CSRF验证失败，请刷新页面重试';
+                            // 自动刷新页面
+                            setTimeout(function() {
+                                if (confirm('是否刷新页面重新获取安全令牌？')) {
+                                    window.location.reload();
+                                }
+                            }, 2000);
+                        } else if (xhr.status === 401) {
+                            errorMsg = '用户未登录，请重新登录';
+                            setTimeout(function() {
+                                window.location.href = '/login';
+                            }, 2000);
+                        } else if (xhr.status === 404) {
+                            errorMsg = '接口不存在';
+                        } else if (xhr.status === 500) {
+                            errorMsg = '服务器内部错误';
+                        } else if (xhr.responseJSON && xhr.responseJSON.msg) {
+                            errorMsg = xhr.responseJSON.msg;
+                        } else {
+                            errorMsg += error || '未知错误';
+                        }
+                        
+                        $('#error-message').text(errorMsg);
+                        $('#error-box').show();
+                        $('#success-box').hide();
+                    }
+                });
+            };
+            
+            console.log('subArticle函数已重写');
+            
+            // 添加自动保存草稿功能
+            var autoSaveTimer;
+            function autoSaveDraft() {
+                var title = $('#articleForm input[name=title]').val();
+                var content = '';
+                
+                if (typeof mditor !== 'undefined' && mditor && mditor.value) {
+                    content = mditor.value;
+                } else {
+                    content = $('#md-editor').val();
+                }
+                
+                if (title || content) {
+                    var draftData = {
+                        title: title,
+                        content: content,
+                        tags: $('#tags').val(),
+                        timestamp: new Date().getTime()
+                    };
+                    
+                    localStorage.setItem('article_draft', JSON.stringify(draftData));
+                    console.log('草稿已自动保存');
+                }
+            }
+            
+            // 每30秒自动保存一次草稿
+            autoSaveTimer = setInterval(autoSaveDraft, 30000);
+            
+            // 页面加载时恢复草稿
+            function restoreDraft() {
+                var draftData = localStorage.getItem('article_draft');
+                if (draftData) {
+                    try {
+                        var draft = JSON.parse(draftData);
+                        var now = new Date().getTime();
+                        // 如果草稿是24小时内的，则恢复
+                        if (now - draft.timestamp < 24 * 60 * 60 * 1000) {
+                            if (confirm('发现未完成的草稿，是否恢复？')) {
+                                $('#articleForm input[name=title]').val(draft.title);
+                                $('#tags').val(draft.tags);
+                                if (typeof mditor !== 'undefined' && mditor) {
+                                    mditor.value = draft.content;
+                                } else {
+                                    $('#md-editor').val(draft.content);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('恢复草稿失败:', e);
+                    }
+                }
+            }
+            
+            // 延迟恢复草稿，确保编辑器已初始化
+            setTimeout(restoreDraft, 2000);
+            
+            // 发布成功后清除草稿
+            window.clearDraft = function() {
+                localStorage.removeItem('article_draft');
+                if (autoSaveTimer) {
+                    clearInterval(autoSaveTimer);
+                }
+            };
+        }, 1000);
+    });
+</script>
+</body>
+</html>
+
