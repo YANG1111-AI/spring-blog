@@ -13,7 +13,7 @@
             <div class="meta-item meta-copyright">
                 <div class="meta-copyright-info">
                     <div class="info-text">
-                        <p style="margin: 30px; text-align: center;"><time class="comment-time" th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy')}"></time> &copy; Powered By <a style="color: #0e90d2" rel="nofollow">zcy</a></p>
+                        <p style="margin: 30px; text-align: center;"><time class="comment-time" th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy')}"></time> &copy; Powered By <a style="color: #0e90d2" rel="nofollow" th:text="${commons.siteTitle()}">博客</a></p>
                     </div>
                 </div>
             </div>

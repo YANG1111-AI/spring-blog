@@ -49,8 +49,8 @@
                                         <a th:href="@{'/article/'+${comment.articleId}}" target="_blank" th:text="${comment.articleId}"></a>
                                     </td>
                                     <td th:text="${comment.author}"></td>
-                                    <td th:utext="${commons.article(comment.content)}"></td>
-                                    <td th:text="${commons.dateFormat(comment.created)}"></td>
+                                    <td th:text="${commons.excerpt(comment.content)}"></td>
+                                    <td th:text="${commons.formatDate(comment.created)}"></td>
                                     <td>
                                         <span th:if="${comment.status == 'approved'}" class="label label-success">已审核</span>
                                         <span th:if="${comment.status == 'pending'}" class="label label-warning">待审核</span>
@@ -84,7 +84,7 @@ function deleteComment(id) {
             url: '/admin/comment/delete/' + id,
             type: 'POST',
             success: function(result) {
-                if (result === 'success') {
+                if (result && result.success) {
                     showSuccessMessage('评论删除成功！');
                     setTimeout(function() {
                         location.reload();

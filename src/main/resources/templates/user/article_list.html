@@ -283,7 +283,7 @@
                             <a th:href="@{'/article/'+${article.id}}" target="_blank" 
                                class="article-title" th:text="${article.title}"></a>
                         </td>
-                        <td th:text="${commons.dateFormat(article.created)}"></td>
+                        <td th:text="${commons.formatDate(article.created)}"></td>
                         <td>
                             <span class="stat-item">
                                 <i class="am-icon-eye"></i>

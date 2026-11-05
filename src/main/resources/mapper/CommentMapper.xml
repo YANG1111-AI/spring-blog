@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.CommentMapper">
+<mapper namespace="com.springblog.dao.CommentMapper">
     
-    <resultMap id="CommentResultMap" type="com.zcy.domain.Comment">
+    <resultMap id="CommentResultMap" type="com.springblog.domain.Comment">
         <id column="id" property="id"/>
         <result column="article_id" property="articleId"/>
         <result column="content" property="content"/>
@@ -21,7 +21,7 @@
     </select>
     
     <!-- 插入评论 -->
-    <insert id="insertComment" parameterType="com.zcy.domain.Comment" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertComment" parameterType="com.springblog.domain.Comment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_comment (article_id, content, created, author, ip, status)
         VALUES (#{articleId}, #{content}, #{created}, #{author}, #{ip}, #{status})
     </insert>
@@ -49,7 +49,7 @@
     </select>
     
     <!-- 更新评论 -->
-    <update id="updateComment" parameterType="com.zcy.domain.Comment">
+    <update id="updateComment" parameterType="com.springblog.domain.Comment">
         UPDATE t_comment 
         SET content = #{content}, 
             author = #{author}, 
@@ -60,6 +60,10 @@
     <!-- 删除评论 -->
     <delete id="deleteComment">
         DELETE FROM t_comment WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByArticleId">
+        DELETE FROM t_comment WHERE article_id = #{articleId}
     </delete>
 
 </mapper>

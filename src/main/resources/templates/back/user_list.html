@@ -29,7 +29,7 @@
                                     <td th:text="${user.id}"></td>
                                     <td th:text="${user.username}"></td>
                                     <td th:text="${user.email}"></td>
-                                    <td th:text="${commons.dateFormat(user.created)}"></td>
+                                    <td th:text="${commons.formatDate(user.created)}"></td>
                                     <td>
                                         <span th:if="${user.valid == 1}" class="badge badge-success">正常</span>
                                         <span th:if="${user.valid == 0}" class="badge badge-danger">禁用</span>

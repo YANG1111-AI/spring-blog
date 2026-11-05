@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.UserMapper">
+<mapper namespace="com.springblog.dao.UserMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="userResultMap" type="com.zcy.domain.User">
+    <resultMap id="userResultMap" type="com.springblog.domain.User">
         <id property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="email" column="email"/>
         <result property="created" column="created"/>
         <result property="valid" column="valid"/>
-        <collection property="authorities" ofType="com.zcy.domain.Authority"
+        <collection property="authorities" ofType="com.springblog.domain.Authority"
                     select="selectAuthoritiesByUserId" column="id"/>
     </resultMap>
 
@@ -21,18 +21,18 @@
     </select>
 
     <!-- 根据邮箱查询用户 -->
-    <select id="selectUserByEmail" parameterType="String" resultType="com.zcy.domain.User">
+    <select id="selectUserByEmail" parameterType="String" resultType="com.springblog.domain.User">
         SELECT * FROM t_user WHERE email = #{email} AND valid = 1
     </select>
 
     <!-- 插入用户 -->
-    <insert id="insertUser" parameterType="com.zcy.domain.User" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUser" parameterType="com.springblog.domain.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_user (username, password, email, created, valid)
         VALUES (#{username}, #{password}, #{email}, #{created}, #{valid})
     </insert>
 
     <!-- 查询用户的权限列表 -->
-    <select id="selectAuthoritiesByUserId" parameterType="Integer" resultType="com.zcy.domain.Authority">
+    <select id="selectAuthoritiesByUserId" parameterType="Integer" resultType="com.springblog.domain.Authority">
         SELECT a.id, a.authority
         FROM t_authority a
         INNER JOIN t_user_authority ua ON a.id = ua.authority_id
@@ -56,7 +56,7 @@
     </select>
 
     <!-- 更新用户信息 -->
-    <update id="updateUser" parameterType="com.zcy.domain.User">
+    <update id="updateUser" parameterType="com.springblog.domain.User">
         UPDATE t_user SET
             email = #{email},
             valid = #{valid}
@@ -69,6 +69,14 @@
     <!-- 删除用户 -->
     <delete id="deleteUser" parameterType="Integer">
         DELETE FROM t_user WHERE id = #{id}
+    </delete>
+
+    <select id="selectAuthorityIdByName" resultType="java.lang.Integer">
+        SELECT id FROM t_authority WHERE authority = #{authority}
+    </select>
+
+    <delete id="deleteUserAuthority">
+        DELETE FROM t_user_authority WHERE user_id = #{userId}
     </delete>
 
 </mapper>

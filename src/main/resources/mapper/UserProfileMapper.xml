@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.UserProfileMapper">
+<mapper namespace="com.springblog.dao.UserProfileMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="userProfileResultMap" type="com.zcy.domain.UserProfile">
+    <resultMap id="userProfileResultMap" type="com.springblog.domain.UserProfile">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
@@ -16,7 +16,7 @@
         <result property="gender" column="gender"/>
         <result property="created" column="created"/>
         <result property="modified" column="modified"/>
-        <association property="user" javaType="com.zcy.domain.User">
+        <association property="user" javaType="com.springblog.domain.User">
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
             <result property="email" column="email"/>
@@ -35,13 +35,13 @@
     </select>
 
     <!-- 插入个人资料 -->
-    <insert id="insertProfile" parameterType="com.zcy.domain.UserProfile" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertProfile" parameterType="com.springblog.domain.UserProfile" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_user_profile (user_id, nickname, avatar, bio, website, location, birthday, gender, created, modified)
         VALUES (#{userId}, #{nickname}, #{avatar}, #{bio}, #{website}, #{location}, #{birthday}, #{gender}, #{created}, #{modified})
     </insert>
 
     <!-- 更新个人资料 -->
-    <update id="updateProfile" parameterType="com.zcy.domain.UserProfile">
+    <update id="updateProfile" parameterType="com.springblog.domain.UserProfile">
         UPDATE t_user_profile SET
             <if test="nickname != null and nickname != ''">
                 nickname = #{nickname},

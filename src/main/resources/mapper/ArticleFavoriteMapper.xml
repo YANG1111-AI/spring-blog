@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.ArticleFavoriteMapper">
+<mapper namespace="com.springblog.dao.ArticleFavoriteMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="articleFavoriteResultMap" type="com.zcy.domain.ArticleFavorite">
+    <resultMap id="articleFavoriteResultMap" type="com.springblog.domain.ArticleFavorite">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="articleId" column="article_id"/>
         <result property="created" column="created"/>
-        <association property="user" javaType="com.zcy.domain.User">
+        <association property="user" javaType="com.springblog.domain.User">
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
             <result property="email" column="email"/>
         </association>
-        <association property="article" javaType="com.zcy.domain.Article">
+        <association property="article" javaType="com.springblog.domain.Article">
             <id property="id" column="article_id"/>
             <result property="title" column="title"/>
             <result property="content" column="content"/>
@@ -26,7 +26,7 @@
     </resultMap>
 
     <!-- 添加收藏 -->
-    <insert id="insertFavorite" parameterType="com.zcy.domain.ArticleFavorite">
+    <insert id="insertFavorite" parameterType="com.springblog.domain.ArticleFavorite">
         INSERT INTO t_article_favorite (user_id, article_id, created)
         VALUES (#{userId}, #{articleId}, #{created})
     </insert>
@@ -73,5 +73,9 @@
     <select id="countFavoritesByUserId" resultType="int">
         SELECT COUNT(*) FROM t_article_favorite WHERE user_id = #{userId}
     </select>
+
+    <delete id="deleteByArticleId">
+        DELETE FROM t_article_favorite WHERE article_id = #{articleId}
+    </delete>
 
 </mapper>

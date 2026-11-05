@@ -35,11 +35,11 @@
     <div class="post-header">
         <h1 class="post-title" itemprop="name headline" th:text="${article.title}"></h1>
         <div class="post-data">
-            <time th:datetime="${commons.dateFormat(article.created)}" itemprop="datePublished" th:text="'发布于 '+ ${commons.dateFormat(article.created)}"></time>
+            <time th:datetime="${commons.formatDate(article.created)}" itemprop="datePublished" th:text="'发布于 '+ ${commons.formatDate(article.created)}"></time>
         </div>
     </div>
     <br />
-    <div id="post-content" class="post-content content" th:utext="${commons.fullArticle(article.content)}"></div>
+    <div id="post-content" class="post-content content" th:utext="${commons.renderContent(article.content)}"></div>
     
     <!-- 文章互动区域 -->
     <div class="post-actions" style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">

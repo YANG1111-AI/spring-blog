@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.ArticleMapper">
+<mapper namespace="com.springblog.dao.ArticleMapper">
     
-    <resultMap id="ArticleResultMap" type="com.zcy.domain.Article">
+    <resultMap id="ArticleResultMap" type="com.springblog.domain.Article">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
         <result column="content" property="content"/>
@@ -33,13 +33,13 @@
     </select>
     
     <!-- 插入文章 -->
-    <insert id="insertArticle" parameterType="com.zcy.domain.Article" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertArticle" parameterType="com.springblog.domain.Article" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_article (title, content, created, modified, categories, tags, allow_comment, thumbnail, author)
         VALUES (#{title}, #{content}, #{created}, #{modified}, #{categories}, #{tags}, #{allowComment}, #{thumbnail}, #{author})
     </insert>
     
     <!-- 更新文章 -->
-    <update id="updateArticle" parameterType="com.zcy.domain.Article">
+    <update id="updateArticle" parameterType="com.springblog.domain.Article">
         UPDATE t_article
         SET title = #{title},
             content = #{content},

@@ -39,11 +39,11 @@
                                     <!-- 评论内容 -->
                                     <div class="comment-content">
                                         <span class="comment-author-at"></span>
-                                        <p th:utext="${commons.article(comment.content)}"></p>
+                                        <p th:text="${commons.excerpt(comment.content)}"></p>
                                     </div>
                                     <!-- 评论日期 -->
                                     <div class="comment-meta">
-                                        <time class="comment-time" th:text="${commons.dateFormat(comment.created)}"></time>
+                                        <time class="comment-time" th:text="${commons.formatDate(comment.created)}"></time>
                                         <span sec:authorize="isAuthenticated()">
                                             <a th:if="${comment.author} != ${#authentication.name}" href="javascript:void(0)" style="color: #1b961b">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;回复

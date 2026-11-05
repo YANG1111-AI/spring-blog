@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.StatisticMapper">
+<mapper namespace="com.springblog.dao.StatisticMapper">
     
-    <resultMap id="StatisticResultMap" type="com.zcy.domain.Statistic">
+    <resultMap id="StatisticResultMap" type="com.springblog.domain.Statistic">
         <id column="id" property="id"/>
         <result column="article_id" property="articleId"/>
         <result column="hits" property="hits"/>
@@ -16,7 +16,7 @@
     </select>
     
     <!-- 插入统计信息 -->
-    <insert id="insertStatistic" parameterType="com.zcy.domain.Statistic" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertStatistic" parameterType="com.springblog.domain.Statistic" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_statistic (article_id, hits, comments_num)
         VALUES (#{articleId}, #{hits}, #{commentsNum})
     </insert>

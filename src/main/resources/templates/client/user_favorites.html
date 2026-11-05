@@ -53,14 +53,14 @@
                                 
                                 <!-- 文章摘要 -->
                                 <p class="article-excerpt" style="color: #666; line-height: 1.6; margin-bottom: 15px;"
-                                   th:text="${commons.intro(favorite.article.content, 150)}">文章摘要...</p>
+                                   th:text="${commons.excerpt(favorite.article.content, 150)}">文章摘要...</p>
                                 
                                 <!-- 文章元信息 -->
                                 <div class="article-meta" style="display: flex; align-items: center; justify-content: space-between; color: #999; font-size: 14px;">
                                     <div class="meta-left" style="display: flex; align-items: center; gap: 15px;">
                                         <span>
                                             <i class="fa fa-calendar"></i>
-                                            发布于 <span th:text="${commons.dateFormat(favorite.article.created)}"></span>
+                                            发布于 <span th:text="${commons.formatDate(favorite.article.created)}"></span>
                                         </span>
                                         <span th:if="${favorite.article.categories != null}">
                                             <i class="fa fa-folder"></i>
@@ -74,7 +74,7 @@
                                     <div class="meta-right" style="display: flex; align-items: center; gap: 10px;">
                                         <span style="color: #f39c12;">
                                             <i class="fa fa-star"></i>
-                                            收藏于 <span th:text="${commons.dateFormat(favorite.created)}"></span>
+                                            收藏于 <span th:text="${commons.formatDate(favorite.created)}"></span>
                                         </span>
                                         <button class="btn-unfavorite" th:onclick="'unfavoriteArticle(' + ${favorite.article.id} + ')'"
                                                 style="background: none; border: 1px solid #dc3545; color: #dc3545; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 12px;">

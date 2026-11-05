@@ -1,74 +1,91 @@
 spring:
   application:
-    name: blog-system
-  
-  # 数据源配置
+    name: spring-blog
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/blog_system?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: root
-  
-  # Redis配置（如果Redis不可用，可以注释掉，项目仍然可以启动）
-  # redis:
-  #   host: localhost
-  #   port: 6379
-  #   password: 
-  #   database: 0
-  #   timeout: 3000
-  #   lettuce:
-  #     pool:
-  #       max-active: 8
-  #       max-idle: 8
-  #       min-idle: 0
-  #       max-wait: -1
-  
-  # Thymeleaf配置
+    url: ${DB_URL:jdbc:mysql://localhost:3306/blog_system?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      pool-name: blog-pool
+      maximum-pool-size: 10
+      connection-timeout: 10000
+
+  # "caffeine" keeps the app runnable with no extra process. Setting CACHE_TYPE=redis plus the
+  # spring.data.redis.* settings routes the same @Cacheable calls through Redis, with no code change.
+  cache:
+    type: ${CACHE_TYPE:caffeine}
+    cache-names: mostViewedArticles
+    caffeine:
+      spec: expireAfterWrite=5m,maximumSize=20
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3000ms
+
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
     mode: HTML
     encoding: UTF-8
-    cache: false
-  
-  # 静态资源路径配置
-  web:
-    resources:
-      static-locations: classpath:/static/
-  
-  # 缓存配置（如果Redis不可用，可以注释掉或改为simple）
-  # cache:
-  #   type: redis
+    cache: ${THYMELEAF_CACHE:true}
 
-# MyBatis配置
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.zcy.domain
+  type-aliases-package: com.springblog.domain
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# PageHelper分页插件配置
 pagehelper:
   helper-dialect: mysql
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
 
-# 服务器配置
 server:
-  port: 8010
+  port: ${SERVER_PORT:8010}
   servlet:
     context-path: /
     encoding:
       charset: UTF-8
       enabled: true
       force: true
+  error:
+    whitelabel:
+      enabled: false
 
-# 日志配置
+blog:
+  site:
+    url: ${BLOG_SITE_URL:http://localhost:8010}
+    title: ${BLOG_SITE_TITLE:Spring Blog}
+    description: ${BLOG_SITE_DESCRIPTION:A lightweight personal blog platform.}
+  content:
+    excerpt-length: 150
+    default-category: Uncategorized
+  thumbnails:
+    placeholder: /user/img/rand/1.png
+    fallbacks:
+      - /article_img/docker/1.png
+      - /article_img/docker/3.png
+      - /article_img/docker/5.png
+      - /article_img/lambda/1.jpg
+      - /article_img/lambda/3.jpg
+      - /article_img/roadmap/2.jpg
+      - /article_img/roadmap/4.jpg
+      - /article_img/gomap/1.jpg
+      - /article_img/gomap/4.jpg
+      - /article_img/frmap/3.jpg
+
 logging:
   level:
-    com.zcy: debug
-    org.springframework: info
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    root: info
+    com.springblog: info
+    com.springblog.dao: debug

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zcy.dao.ArticleLikeMapper">
+<mapper namespace="com.springblog.dao.ArticleLikeMapper">
 
     <!-- 结果映射 -->
-    <resultMap id="articleLikeResultMap" type="com.zcy.domain.ArticleLike">
+    <resultMap id="articleLikeResultMap" type="com.springblog.domain.ArticleLike">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="articleId" column="article_id"/>
         <result property="created" column="created"/>
-        <association property="user" javaType="com.zcy.domain.User">
+        <association property="user" javaType="com.springblog.domain.User">
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
             <result property="email" column="email"/>
         </association>
-        <association property="article" javaType="com.zcy.domain.Article">
+        <association property="article" javaType="com.springblog.domain.Article">
             <id property="id" column="article_id"/>
             <result property="title" column="title"/>
         </association>
     </resultMap>
 
     <!-- 添加点赞 -->
-    <insert id="insertLike" parameterType="com.zcy.domain.ArticleLike">
+    <insert id="insertLike" parameterType="com.springblog.domain.ArticleLike">
         INSERT INTO t_article_like (user_id, article_id, created)
         VALUES (#{userId}, #{articleId}, #{created})
     </insert>
@@ -67,5 +67,9 @@
     <select id="countLikesByUserId" resultType="int">
         SELECT COUNT(*) FROM t_article_like WHERE user_id = #{userId}
     </select>
+
+    <delete id="deleteByArticleId">
+        DELETE FROM t_article_like WHERE article_id = #{articleId}
+    </delete>
 
 </mapper>

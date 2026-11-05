@@ -11,7 +11,7 @@
                     <div class="col-sm-12">
                         <h4 class="page-title">
                             <i class="fa fa-dashboard"></i> 管理仪表盘
-                            <small>欢迎来到zcy个人博客管理后台</small>
+                            <small th:text="'欢迎来到' + ${commons.siteTitle()} + '管理后台'">欢迎来到博客管理后台</small>
                         </h4>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-md-2 col-sm-4 col-xs-6">
-                                        <a href="/admin/article/publish" class="btn btn-primary btn-block">
+                                        <a th:href="@{/admin/article/toEditPage}" class="btn btn-primary btn-block">
                                             <i class="fa fa-plus"></i><br>发布文章
                                         </a>
                                     </div>
@@ -122,12 +122,12 @@
                                     <li class="list-group-item" th:each="article : ${articles}">
                                         <div class="row">
                                             <div class="col-xs-8">
-                                                <a target="_blank" th:href="${commons.site_url('/article/')}+${article.id}"
+                                                <a target="_blank" th:href="${commons.siteUrl('/article/')}+${article.id}"
                                                    th:text="${article.title}" class="text-primary"></a>
                                             </div>
                                             <div class="col-xs-4 text-right">
                                                 <span class="badge badge-primary" th:text="${article.commentsNum}">0</span>
-                                                <small class="text-muted" th:text="${commons.dateFormat(article.created)}"></small>
+                                                <small class="text-muted" th:text="${commons.formatDate(article.created)}"></small>
                                             </div>
                                         </div>
                                     </li>
@@ -157,10 +157,10 @@
                                             <div class="media-body">
                                                 <h6 class="media-heading">
                                                     <strong th:text="${comment.author}">用户</strong>
-                                                    <small class="text-muted" th:text="${commons.dateFormat(comment.created)}"></small>
+                                                    <small class="text-muted" th:text="${commons.formatDate(comment.created)}"></small>
                                                 </h6>
-                                                <p class="text-muted" th:utext="${commons.article(comment.content)}"></p>
-                                                <a th:href="${commons.site_url('/article/')}+${comment.articleId}+'#comments'"
+                                                <p class="text-muted" th:text="${commons.excerpt(comment.content)}"></p>
+                                                <a th:href="${commons.siteUrl('/article/')}+${comment.articleId}+'#comments'"
                                                    target="_blank" class="btn btn-xs btn-default">查看文章</a>
                                             </div>
                                         </div>

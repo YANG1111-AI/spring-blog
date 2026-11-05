@@ -90,7 +90,7 @@
     <div class="form-group">
         <label>文章内容 <span style="color: red;">*</span></label>
         <div id="md-container">
-            <textarea id="md-editor" th:utext="${contents != null && contents.content != null} ? ${contents.content} : ''"></textarea>
+            <textarea id="md-editor" th:text="${contents != null && contents.content != null} ? ${contents.content} : ''"></textarea>
         </div>
     </div>
 </th:block>
